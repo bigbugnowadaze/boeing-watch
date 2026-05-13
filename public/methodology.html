@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>METHODOLOGY · BOEING WATCH</title>
+<meta name="description" content="How every number on Boeing Watch is computed. Data sources, refresh cadences, known limitations, severity rubric, corrections policy, open-data license.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Boeing Watch">
+<meta property="og:title" content="METHODOLOGY · BOEING WATCH">
+<meta property="og:description" content="How every number on Boeing Watch is computed. Nine sections. Public, dated, versioned.">
+<meta property="og:url" content="https://boeingwatch.org/methodology.html">
+<meta name="theme-color" content="#F0EBE0">
+<link rel="icon" type="image/svg+xml" href="/assets/boeingwatch-favicon.svg">
+<link rel="canonical" href="https://boeingwatch.org/methodology.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="topbar-brand" href="/">BOEING · WATCH</a>
+    <div class="topbar-mid">
+      <span class="station">INDEPENDENT · NON-AFFILIATED</span>
+    </div>
+    <div class="topbar-nav">
+      <a href="/methodology.html" aria-current="page">METHODOLOGY</a>
+      <a href="/corrections.html">CORRECTIONS</a>
+      <a href="/sources.html">SOURCES</a>
+      <a href="/about.html">ABOUT</a>
+    </div>
+  </div>
+
+  <header class="page-head">
+    <div class="kicker">▎ DOCUMENT 001 · METHODOLOGY · VERSION 1</div>
+    <h1>HOW THE NUMBERS<br>ARE COMPUTED</h1>
+    <p class="lede">
+      Every counter on this site is derived from a named public record. This page documents the data sources, the refresh cadence, the severity rubric, the known limitations, the corrections policy, and the open-data license. It is updated whenever the methodology changes, with a dated entry in the change log at the foot of the page.
+    </p>
+    <div class="page-meta">
+      <span>EFFECTIVE FROM <strong>13 MAY 2026</strong></span>
+      <span>VERSION <strong>1.0</strong></span>
+      <span>NEXT REVIEW <strong>QUARTERLY</strong></span>
+      <span>CONTACT <strong><a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a></strong></span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-label">▎ SECTIONS</div>
+    <ol>
+      <li><a href="#s1">What counts as a Service Difficulty Report</a></li>
+      <li><a href="#s2">Severity classification — the three-tier rubric</a></li>
+      <li><a href="#s3">The 24-hour window</a></li>
+      <li><a href="#s4">Counting cumulative SDRs</a></li>
+      <li><a href="#s5">Identifying Boeing-manufactured aircraft</a></li>
+      <li><a href="#s6">Known data limitations</a></li>
+      <li><a href="#s7">The memorial entries — whistleblowers and crash dead</a></li>
+      <li><a href="#s8">Corrections policy</a></li>
+      <li><a href="#s9">Open data policy and license</a></li>
+    </ol>
+  </nav>
+
+  <section class="section" id="s1">
+    <div class="section-head">
+      <div class="section-title">WHAT COUNTS AS A SERVICE DIFFICULTY REPORT</div>
+      <div class="section-num">§ 01</div>
+    </div>
+    <div class="prose">
+      <p>A Service Difficulty Report (SDR) is a record filed with the Federal Aviation Administration by an operator, an air carrier, a repair station, or a holder of a type certificate, documenting a failure, malfunction, or defect of an aircraft, engine, propeller, or appliance. Filings are governed by <strong>14 CFR Parts 121, 125, and 145</strong> and are aggregated in the public-facing FAA Service Difficulty Reporting System at <a href="https://av-info.faa.gov/sdrx/" target="_blank" rel="noopener">av-info.faa.gov/sdrx/</a>.</p>
+
+      <p>Boeing Watch displays an SDR row when, and only when, all four of the following conditions are met:</p>
+      <ul>
+        <li>The record appears in the FAA SDR public database.</li>
+        <li>The <em>aircraft_make</em> field, after normalization, resolves to <strong>BOEING</strong>.</li>
+        <li>The <em>aircraft_model</em> field resolves to a Boeing commercial type designator we track (currently: 737-7, 737-8, 737-9, 737-10, 757, 767, 777-200, 777-300, 787-8, 787-9, 787-10).</li>
+        <li>The <em>received_date</em> is on or after 5 January 2024 — the day of the Alaska Airlines Flight 1282 door plug separation, the date from which the cumulative counters run.</li>
+      </ul>
+      <p>Records that do not meet all four conditions are filtered before they reach the database. Records meeting all four are normalized by the SDR Beat Reporter agent into the canonical sentence stem (see §02) and written to the public events table.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s2">
+    <div class="section-head">
+      <div class="section-title">SEVERITY CLASSIFICATION</div>
+      <div class="section-num">§ 02</div>
+    </div>
+    <div class="prose">
+      <p>Each SDR is assigned exactly one severity tier — <strong>severe</strong>, <strong>elevated</strong>, or <strong>noted</strong> — by the SDR Beat Reporter agent, based on the criteria below. The criteria are derived from the narrative text of the SDR and the JASC chapter code where present. The classifier is rule-based; the language model is used only to interpret the narrative against the rules.</p>
+    </div>
+
+    <dl class="deflist" style="margin-top:18px;">
+      <dt>Severe</dt>
+      <dd>Any one of: in-flight engine shutdown · cabin or cargo depressurization · fire indication or actual fire · structural failure · emergency descent · return-to-base under declared emergency · fatal injury · hull loss · MCAS-related anomaly · primary flight-control failure · dual-system failure.</dd>
+
+      <dt>Elevated</dt>
+      <dd>Any one of: in-flight divert without emergency declaration · pre-departure abort · single-system anomaly during flight · flight-control irregularity · smoke in cabin without fire indication · severe turbulence event with injury but no fatal injury.</dd>
+
+      <dt>Noted</dt>
+      <dd>Routine maintenance findings · deferred items written up in service · post-flight inspection anomalies with no operational impact · documentation discrepancies.</dd>
+    </dl>
+
+    <div class="callout">
+      <strong>If the narrative is ambiguous</strong> — for example, an emergency declaration is mentioned but no underlying event is specified — the record is classified <em>noted</em> and flagged for human review. The classifier is biased toward under-counting severe events rather than over-counting them.
+    </div>
+
+    <div class="prose">
+      <p>The <em>banner timer</em> on the front page measures the elapsed time since the most recent SDR classified <strong>severe</strong>. The counter does not include elevated or noted events. When a new severe event is filed, the counter resets to zero and the previous duration is written to a permanent record.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s3">
+    <div class="section-head">
+      <div class="section-title">THE 24-HOUR WINDOW</div>
+      <div class="section-num">§ 03</div>
+    </div>
+    <div class="prose">
+      <p>The daily diary and the pulse chart on the front page operate on a <strong>rolling 24-hour window</strong>, anchored to <strong>04:00 UTC</strong> on the day of publication. An event is included in a given day's window if its <em>filed_at</em> timestamp falls in the closed-open interval <strong>[T − 24h, T)</strong> where T is the most recent 04:00 UTC instant before the page was rendered.</p>
+
+      <p>All timestamps on the site are presented in <strong>Coordinated Universal Time (UTC)</strong>, in 24-hour notation, regardless of the viewer's local timezone. This matches FAA convention and the Aviation Herald convention. Local times are never used for primary records and are not used in the SDR sentence stem.</p>
+
+      <p>The FAA SDR feed records the date a report was <em>received</em>, not the date the underlying event occurred. Where the two differ — for example, an inspection finding written up days after the inspection — we use the received date for windowing and quote the event date in the narrative if it is present in the source record.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s4">
+    <div class="section-head">
+      <div class="section-title">COUNTING CUMULATIVE SDRs</div>
+      <div class="section-num">§ 04</div>
+    </div>
+    <div class="prose">
+      <p>The cumulative SDR counter — the running total displayed on the <em>Wall</em>, in the diary closing line, and in the open-data exports — is the number of distinct SDR records meeting the §01 inclusion criteria with a <em>received_date</em> on or after <strong>5 January 2024</strong>.</p>
+
+      <p>Counting rules:</p>
+      <ul>
+        <li>The unit of count is one SDR <em>record</em>. One physical event that produces two records (for example, a divert followed by a maintenance write-up the same day, each filed separately) is counted twice. This is the FAA's accounting and we do not collapse it.</li>
+        <li>Amendments to an existing SDR are not counted as new records; the original record's narrative is updated and the amendment is logged in the corrections trail.</li>
+        <li>Records that are subsequently retracted by the FAA are removed from the cumulative count and a correction is published (see §08).</li>
+        <li>The counter is computed in real time from the events table; it is not maintained as a cached integer.</li>
+      </ul>
+
+      <p>The <em>days since the door plug blowout</em> counter is the integer number of UTC days between 5 January 2024 and the current UTC date, inclusive of both endpoints. It is computed on render.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s5">
+    <div class="section-head">
+      <div class="section-title">IDENTIFYING BOEING-MANUFACTURED AIRCRAFT</div>
+      <div class="section-num">§ 05</div>
+    </div>
+    <div class="prose">
+      <p>An aircraft is treated as Boeing-manufactured if any one of the following resolves affirmatively:</p>
+      <ul>
+        <li>The FAA SDR record's <em>aircraft_make</em> field, normalized, equals <strong>BOEING</strong>.</li>
+        <li>The aircraft's registration appears in the FAA Aircraft Registry with <em>Mfr Name</em> equal to <strong>BOEING</strong> at the time of the SDR's received date.</li>
+        <li>The ADS-B type designator transmitted by the aircraft is one of the Boeing commercial type codes we track (<strong>B737</strong>, <strong>B38M</strong>, <strong>B39M</strong>, <strong>B37M</strong>, <strong>B752</strong>, <strong>B763</strong>, <strong>B772</strong>, <strong>B77W</strong>, <strong>B788</strong>, <strong>B789</strong>, <strong>B78X</strong>).</li>
+      </ul>
+
+      <p>Aircraft manufactured by Spirit AeroSystems components but assembled by Boeing under a Boeing type certificate are counted as Boeing-manufactured. Aircraft manufactured by McDonnell Douglas before the 1997 merger and still flying commercially are not displayed; only post-1997 Boeing-badged airframes are in scope.</p>
+
+      <p>The <em>737 MAX in the sky</em> counter on the front page is the live count of aircraft transmitting ADS-B with type designator <strong>B38M</strong> or <strong>B39M</strong> as reported by <a href="https://airplanes.live/" target="_blank" rel="noopener">airplanes.live</a>, polled every thirty seconds. It is filtered to <em>altitude greater than 1,000 ft</em> to exclude aircraft on the ground. It does not include the 737 MAX 7 or 10, which are not yet in revenue service.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s6">
+    <div class="section-head">
+      <div class="section-title">KNOWN DATA LIMITATIONS</div>
+      <div class="section-num">§ 06</div>
+    </div>
+    <div class="prose">
+      <p>The FAA SDR system is the most authoritative public record of in-service difficulties with U.S.-registered Boeing aircraft. It is not a complete record of all in-service difficulties. The following limitations are inherent to the source and are repeated here so that no one may reasonably claim a Boeing Watch counter is a count of <em>all</em> events.</p>
+
+      <ul>
+        <li><strong>Reporting discretion.</strong> Operators are required to file SDRs for events meeting the regulatory criteria. Events not meeting those criteria are not in the database. There is no automated check that compels reporting.</li>
+        <li><strong>JASC code inconsistency.</strong> The Joint Aircraft System/Component code field is not consistently populated. Two records describing equivalent failures may carry different JASC codes; some severe events carry no JASC code at all. We do not use JASC as the primary severity signal for this reason.</li>
+        <li><strong>Missing corrective-action fields.</strong> The <em>corrective_action</em> and <em>part_disposition</em> fields are populated unevenly. Where they are blank, we leave them blank in our exports. We do not impute them.</li>
+        <li><strong>International blind spots.</strong> The FAA database covers U.S.-registered aircraft and U.S.-operated foreign-registered aircraft. Events on non-U.S.-registered Boeing aircraft operating internationally generally do not appear. We make no claim to count those.</li>
+        <li><strong>Latency.</strong> SDRs are required to be filed within 72 hours of the event for Part 121 operators. The public-facing database is updated on a cycle that lags real-world events by 24–96 hours in practice. The front-page counters are therefore not "live" in the sense that a transponder feed is live.</li>
+        <li><strong>Free-text narrative.</strong> The underlying SDR narrative is unstructured English typed by a mechanic, inspector, or pilot. Spelling, abbreviations, and detail vary widely. Our normalization preserves the facts and discards stylistic variance; it does not improve on the source data's level of detail.</li>
+        <li><strong>airplanes.live coverage.</strong> The live counter depends on volunteer-operated ADS-B receivers and does not see aircraft in regions of poor ground-station coverage (parts of central Africa, Siberia, the open ocean far from coastline). The displayed count is therefore a slight under-count of all 737 MAX aircraft actually airborne.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="s7">
+    <div class="section-head">
+      <div class="section-title">THE MEMORIAL ENTRIES</div>
+      <div class="section-num">§ 07</div>
+    </div>
+    <div class="prose">
+      <p>The <em>Dead</em> panel on the front page carries two kinds of entries: the named whistleblowers John Barnett and Joshua Dean, and the crash references for Lion Air 610 and Ethiopian 302. The handling of these entries is more sensitive than the handling of SDRs, and the rules are stricter.</p>
+
+      <p>For each whistleblower entry we publish only:</p>
+      <ul>
+        <li>Information drawn from the public record: court filings, coroner findings, named-reporter journalism in named publications, and statements the deceased made publicly during their lifetime.</li>
+        <li>Quoted statements attributed to a named source, with the source linked in the citations list.</li>
+        <li>Dates and ages drawn from death certificates, obituaries published by family, or named-reporter accounts.</li>
+      </ul>
+
+      <p>We do not publish:</p>
+      <ul>
+        <li>Speculation about cause of death beyond what the coroner, the police, or a court has ruled.</li>
+        <li>Implications of corporate involvement in deaths where no such involvement has been alleged in a public filing or stated by a named source.</li>
+        <li>Statements attributed to anonymous sources or to "people familiar with the matter."</li>
+        <li>Photographs of the deceased. The dead are referred to by name only.</li>
+      </ul>
+
+      <p>For the crash references, we publish the date, the flight number, the operator, the aircraft type, the loss-of-life count, and the proximate cause as determined by the national accident investigation board with primary jurisdiction. We do not editorialize on cause. We link to the final accident reports.</p>
+
+      <p>Memorial entries are reviewed quarterly. Corrections to a memorial entry — for example, an updated death-certificate finding, a settled lawsuit, an exhumation result — are handled under §08 with the same procedure as any other correction but with priority routing.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s8">
+    <div class="section-head">
+      <div class="section-title">CORRECTIONS POLICY</div>
+      <div class="section-num">§ 08</div>
+    </div>
+    <div class="prose">
+      <p>The standing instruction is simple. <strong>If a published claim on this site is wrong, we correct it and we say what we corrected.</strong></p>
+
+      <p>The procedure:</p>
+      <ol>
+        <li>A correction may be requested by any party. Send to <a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a> with the URL, the claim in question, and the source supporting the correction.</li>
+        <li>Requests are reviewed within seven calendar days of receipt. A receipt acknowledgment is sent within forty-eight hours.</li>
+        <li>If the requested correction is supported by the source, the entry is updated. The original wording is preserved in the corrections log at <a href="/corrections.html">/corrections</a>, along with the date of the change, the field affected, the old text, the new text, and the source of the correction.</li>
+        <li>If the requested correction is not supported by the source, a response explaining the reasoning is sent to the requester and a note is added to the corrections log indicating the request was reviewed and declined, with the reason. No declined-request body text is published; the requester's identity is not disclosed.</li>
+        <li>Material corrections — corrections to a severity classification, a fatality count, a named individual, or a financial figure — are noted at the head of the affected entry for thirty days.</li>
+      </ol>
+
+      <p>The corrections log is the public, permanent record of the site's mistakes. It is never deleted. It is the load-bearing element of the methodology.</p>
+    </div>
+  </section>
+
+  <section class="section" id="s9">
+    <div class="section-head">
+      <div class="section-title">OPEN DATA AND LICENSE</div>
+      <div class="section-num">§ 09</div>
+    </div>
+    <div class="prose">
+      <p>The Boeing Watch dataset — every SDR row, every event, every counter — is released into the public domain under a <strong>Creative Commons Attribution 4.0 International (CC BY 4.0)</strong> license. The license is available in full at <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">creativecommons.org/licenses/by/4.0/</a>.</p>
+
+      <p>Under CC BY 4.0 you may copy, redistribute, remix, transform, and build upon the data for any purpose, including commercially, provided that you give appropriate credit, link to the license, and indicate if changes were made.</p>
+
+      <p>The canonical attribution form is:</p>
+
+      <div class="callout">
+        <strong>SOURCE</strong> &nbsp;Boeing Watch (boeingwatch.org), Harrow Lab, retrieved [DATE]. Licensed CC BY 4.0.
+      </div>
+
+      <p>Data is exposed at the following endpoints once the Stage 2 API is live:</p>
+      <ul>
+        <li><a href="https://api.boeingwatch.org/api/sdr.csv">api.boeingwatch.org/api/sdr.csv</a> &nbsp;— the full SDR table as comma-separated values.</li>
+        <li><a href="https://api.boeingwatch.org/api/sdr.json">api.boeingwatch.org/api/sdr.json</a> &nbsp;— the same data as JSON.</li>
+        <li><a href="https://api.boeingwatch.org/api/wire">api.boeingwatch.org/api/wire</a> &nbsp;— the wire as a paginated event list.</li>
+        <li><a href="https://api.boeingwatch.org/api/corrections">api.boeingwatch.org/api/corrections</a> &nbsp;— the corrections log.</li>
+      </ul>
+      <p>The source code that produces the site is published at <a href="https://github.com/bigbugnowadaze/boeing-watch" target="_blank" rel="noopener">github.com/bigbugnowadaze/boeing-watch</a> under the MIT license. The agent prompts are published with the source. There are no proprietary components.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">CHANGE LOG</div>
+      <div class="section-num">§ —</div>
+    </div>
+    <dl class="deflist">
+      <dt>13 May 2026 · v1.0</dt>
+      <dd>Initial methodology published. Stage 1 of Boeing Watch goes live with the static site, the four credibility pages, and the Cloudflare Pages deployment. Live counters call <em>airplanes.live</em> directly from the browser; the Stage 2 API and the SDR pipeline are not yet running, so the SDR, wire, and diary counters render against the embedded snapshot. The §01–§09 definitions above describe the production system that takes over when Stage 2 ships; the Stage 1 site is presented as a snapshot of those definitions, with the <em>SNAPSHOT</em> indicator visible in the topbar whenever a live source is unreachable.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <div>HARROW LAB · 2026 · INDEPENDENT · NOT AFFILIATED WITH BOEING OR THE FAA · <a href="/">FRONT PAGE</a> · <a href="/corrections.html">CORRECTIONS</a> · <a href="/sources.html">SOURCES</a> · <a href="/about.html">ABOUT</a></div>
+    <div>EVERY CLAIM ON THIS PAGE IS LINKED TO A NAMED SOURCE · <a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a></div>
+  </footer>
+
+</div>
+</body>
+</html>
