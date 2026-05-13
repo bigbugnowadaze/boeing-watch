@@ -1,0 +1,41 @@
+{
+  "_comment": "Sample SDR fixture for STAGE2-DEPLOY.md step 8 — three records that exercise the three severity tiers. Synthetic data; values are illustrative. Used only to verify the SDR Beat Reporter agent talks to Claude Haiku and writes to D1.",
+  "sdrs": [
+    {
+      "report_id": "2026-99001",
+      "received_date": "2026-05-11",
+      "submission_time": "22:08",
+      "operator_code": "SWA",
+      "aircraft_make": "BOEING",
+      "aircraft_model": "737-8",
+      "aircraft_serial": "N8709Q",
+      "narrative_raw": "CABIN PRESS WARN AT FL370. EMER DESC AND DIVERT KIAH. FLT WN1234 KDAL-KMSY 174 POB.",
+      "jasc_code": "2130",
+      "stage_of_operation": "CRUISE"
+    },
+    {
+      "report_id": "2026-99002",
+      "received_date": "2026-05-12",
+      "submission_time": "06:42",
+      "operator_code": "AAL",
+      "aircraft_make": "BOEING",
+      "aircraft_model": "737-8",
+      "aircraft_serial": "N987AA",
+      "narrative_raw": "DURING PREFLIGHT INSPECTION KDFW, HYDRAULIC FLUID OBSERVED LEAKING FROM NO 2 SYSTEM ACCESS PANEL. AC GROUNDED FOR MAINT.",
+      "jasc_code": "2900",
+      "stage_of_operation": "PREFLIGHT"
+    },
+    {
+      "report_id": "2026-99003",
+      "received_date": "2026-05-12",
+      "submission_time": "11:23",
+      "operator_code": "UAL",
+      "aircraft_make": "BOEING",
+      "aircraft_model": "737-9",
+      "aircraft_serial": "N37502",
+      "narrative_raw": "POST-FLIGHT INSPECTION REVEALED MINOR HAIL DAMAGE TO LE SLAT NO 3. WITHIN ALLOWABLE LIMITS PER AMM 51-77-01. DEFERRED.",
+      "jasc_code": "5710",
+      "stage_of_operation": "POSTFLIGHT"
+    }
+  ]
+}
