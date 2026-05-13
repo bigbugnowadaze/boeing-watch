@@ -1,14 +1,53 @@
+/**
+ * Cloudflare Worker configuration for Boeing Watch.
+ *
+ * Stage 2 adds: D1 (events / diary / corrections / etc), KV cache for
+ * /api/counts and /api/stock, the Worker entrypoint at src/index.ts,
+ * and an hourly cron trigger for the SDR Beat Reporter.
+ *
+ * IMPORTANT — replace the placeholder IDs marked with [REPLACE] before
+ * the first deploy. The wrangler commands that produce them are in
+ * STAGE2-DEPLOY.md.
+ */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+
   "name": "boeing-watch",
+  "main": "src/index.ts",
   "compatibility_date": "2026-05-13",
+  "compatibility_flags": ["nodejs_compat"],
+
   "observability": {
     "enabled": true
   },
+
+  // Static asset routing — files under ./public are served at /
   "assets": {
-    "directory": "public"
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
   },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+
+  // ─── D1 database (boeingwatch) ───────────────────────────────────
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "boeingwatch",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+
+  // ─── KV namespace (proxy cache) ──────────────────────────────────
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
+  ],
+
+  // ─── Cron triggers ───────────────────────────────────────────────
+  // Hourly at :05 — SDR Beat Reporter. Add more triggers as agents come online.
+  "triggers": {
+    "crons": ["5 * * * *"]
+  }
 }

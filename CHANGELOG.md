@@ -6,6 +6,87 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Dat
 
 ---
 
+## [1.1.0] — 2026-05-13 — Stage 2A
+
+The foundation for the automated wire. Adds the Worker API layer, D1
+database, and the first agent (SDR Beat Reporter). No agents are firing
+on cron yet — the SDR Beat Reporter runs on demand via
+`/admin/sdr/ingest` and on a stubbed cron trigger pending the FAA
+fetcher (Stage 2B).
+
+### Added — Worker (`src/`)
+- `src/index.ts` — Hono router serving `/api/*` and routing everything
+  else to static assets. Cron handler dispatches scheduled agents.
+- `src/env.ts` — typed bindings (D1, KV, ASSETS, secrets)
+- `src/lib/cache.ts` — read-through KV cache wrapper
+- `src/lib/operators.ts` — ICAO operator code → airline name map
+- `src/lib/cors.ts` — CORS allow-list (boeingwatch.org only in prod)
+- `src/routes/counts.ts` — `/api/counts` proxy for airplanes.live (KV
+  cached 30s)
+- `src/routes/stock.ts` — `/api/stock` proxy for Yahoo Finance BA (KV
+  cached 60s)
+- `src/routes/wire.ts` — `/api/wire` and `/api/wire/:id` reading from D1
+- `src/routes/wall.ts` — `/api/wall` SDR aggregate counts
+- `src/routes/corrections.ts` — `/api/corrections` log reader
+- `src/routes/exports.ts` — `/api/sdr.csv` and `/api/sdr.json`
+  open-data dumps (CC BY 4.0)
+
+### Added — first agent
+- `src/agents/sdr-beat-reporter.ts` — normalizes raw FAA Service
+  Difficulty Reports to the canonical sentence stem, classifies
+  severity per the three-tier rubric, writes to D1. Uses Claude Haiku
+  4.5 (`claude-haiku-4-5`).
+
+### Added — D1 schema (`db/`)
+- `db/schema.sql` — 10 tables: events, diary, foia_queue, corrections,
+  wire_post_queue, methodology_versions, victims, whistleblowers,
+  anomalies, failed_normalizations
+- `db/seed-whistleblowers.sql` — John Barnett, Joshua Dean
+- `db/seed-methodology.sql` — methodology v1.0 row
+- `db/seed-victims.sql` — stub; the 346 names from JT610 and ET302 must
+  be transcribed from the KNKT and Ethiopian CAA reports separately
+- `db/sample-sdrs.json` — three synthetic SDRs for first-run testing
+
+### Added — admin endpoints (auth: `ADMIN_TOKEN`)
+- `POST /admin/sdr/ingest` — push a batch of raw SDRs through the SDR
+  Beat Reporter pipeline. Used for the one-off backfill and for
+  development.
+- `GET /admin/health` — sanity probe (D1 reachable, KV writable,
+  Anthropic key present)
+
+### Changed — frontend
+- `public/index.html` — live counter now reads from `/api/counts`
+  instead of going direct to `api.airplanes.live`. Existing
+  snapshot-fallback behavior unchanged: after two consecutive `/api`
+  failures the topbar flips from LIVE to SNAPSHOT.
+- `public/index.html` — added `fetchStock()` polling `/api/stock` every
+  60s; soft-fails to the embedded snapshot.
+
+### Added — repo metadata
+- `package.json` — `hono`, `@anthropic-ai/sdk` as deps; `wrangler`,
+  `typescript`, `@cloudflare/workers-types` as dev deps; npm scripts
+  for D1 schema/seed and Wrangler workflow.
+- `tsconfig.json` — strict TypeScript targeting ES2022 with Workers
+  types
+- `wrangler.jsonc` — D1 binding (`DB`), KV binding (`CACHE`), Worker
+  entrypoint (`src/index.ts`), hourly cron (`5 * * * *`)
+- `STAGE2-DEPLOY.md` — click-by-click runbook for the Cloudflare
+  steps Donald has to run locally (D1 create, KV create, schema apply,
+  secret put, deploy verify)
+
+### Deferred to Stage 2B
+- The FAA SDR fetcher (the cron job currently logs and exits — no SDRs
+  are pulled from the FAA)
+- The Diarist agent (daily 04:00 UTC)
+- The Anomaly Editor (nightly statistics)
+- The FOIA Clerk (triggered by anomalies)
+- The Fact-Checker (weekly self-audit)
+- The Wire Operator (cross-platform posting)
+- The Compositor (Daily Wire PDF)
+- The 346 victim names (transcription work, manual)
+
+---
+
 ## [1.0.0] — 2026-05-13 — Stage 1
 
 First public release. The static site goes live at

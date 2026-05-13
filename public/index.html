@@ -1176,35 +1176,24 @@ function renderPulse() {
 let liveAttempts = 0;
 let liveFails = 0;
 async function fetchLive() {
+  // Stage 2: call our own Worker, which proxies airplanes.live with a 30s
+  // KV cache. Same response shape as the embedded snapshot, so the
+  // renderers don't care which source produced it. Fallback path is
+  // unchanged — after 2 consecutive failures we switch to SNAPSHOT mode.
   liveAttempts++;
   document.querySelector('.live-dot').classList.add('fetching');
   try {
-    const [r8, r9] = await Promise.all([
-      fetch('https://api.airplanes.live/v2/type/B38M'),
-      fetch('https://api.airplanes.live/v2/type/B39M'),
-    ]);
-    if (!r8.ok || !r9.ok) throw new Error('upstream ' + r8.status + '/' + r9.status);
-    const [d8, d9] = await Promise.all([r8.json(), r9.json()]);
-    const all = [...(d8.ac || []), ...(d9.ac || [])];
-    const cleaned = all.map(a => {
-      const callsign = (a.flight || '').trim() || a.r || 'UNK';
-      return {
-        c: callsign, r: a.r || '', t: a.t || '',
-        o: deriveOperator(callsign),
-        a: Math.round(a.alt_baro || 0),
-        s: Math.round(a.gs || 0),
-        h: Math.round(a.track || 0),
-        la: a.lat ? Number(a.lat.toFixed(2)) : 0,
-        lo: a.lon ? Number(a.lon.toFixed(2)) : 0,
-      };
-    }).filter(a => a.a > 1000).sort((x, y) => x.c.localeCompare(y.c));
+    const r = await fetch('/api/counts', { cache: 'no-store' });
+    if (!r.ok) throw new Error('counts ' + r.status);
+    const data = await r.json();
+    if (!Array.isArray(data.aircraft)) throw new Error('counts payload malformed');
 
     const prevCount = SNAPSHOT.count;
-    SNAPSHOT = { fetched_at: new Date().toISOString(), count: cleaned.length, aircraft: cleaned };
+    SNAPSHOT = { fetched_at: data.fetched_at, count: data.count, aircraft: data.aircraft };
     feedFetchedAt = Date.now();
     liveFails = 0;
     document.body.dataset.mode = 'live';
-    renderHero(cleaned.length !== prevCount);
+    renderHero(data.count !== prevCount);
     renderFeed(true);
     renderMap();
   } catch (e) {
@@ -1217,6 +1206,23 @@ async function fetchLive() {
     }
   } finally {
     document.querySelector('.live-dot').classList.remove('fetching');
+  }
+}
+
+async function fetchStock() {
+  // Stage 2: poll BA share price via our Worker proxy (60s KV cache).
+  // Stage 1 ran without this — the prototype rendered against the
+  // embedded snapshot only.
+  try {
+    const r = await fetch('/api/stock', { cache: 'no-store' });
+    if (!r.ok) return; // leave snapshot in place; don't flip a mode tag
+    const data = await r.json();
+    BA.price = data.price; BA.prev = data.prev; BA.open = data.open;
+    BA.high = data.high; BA.low = data.low; BA.volume = data.volume;
+    BA.marketCap = data.marketCap;
+    renderStock();
+  } catch (_) {
+    // Soft fail — keep the embedded snapshot on screen.
   }
 }
 
@@ -1268,6 +1274,10 @@ tickFeedAgo(); setInterval(tickFeedAgo, 1000);
 // First live refresh after 5s, then every 30s
 setTimeout(fetchLive, 5000);
 window._liveInterval = setInterval(fetchLive, 30000);
+
+// Stock — first refresh after 5s, then every 60s
+setTimeout(fetchStock, 5000);
+window._stockInterval = setInterval(fetchStock, 60000);
 </script>
 </body>
 </html>

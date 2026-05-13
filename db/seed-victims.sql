@@ -1,0 +1,32 @@
+-- ═══════════════════════════════════════════════════════════════════
+-- VICTIMS SEED — the 346 named dead from JT610 and ET302.
+--
+-- This file is intentionally a stub. The 346 names must be transcribed
+-- from the two primary accident-board reports below, which contain the
+-- official passenger manifests:
+--
+--   · JT610 (Lion Air 610, 29 Oct 2018, 189 dead): KNKT.18.10.35.04,
+--     Indonesia National Transportation Safety Committee
+--     https://en.wikipedia.org/wiki/Lion_Air_Flight_610
+--
+--   · ET302 (Ethiopian 302, 10 Mar 2019, 157 dead): Investigation
+--     report AI-01/19, Ethiopian Civil Aviation Authority
+--     https://en.wikipedia.org/wiki/Ethiopian_Airlines_Flight_302
+--
+-- The Memorial Wall on the front page (Stage 3) reads from this table.
+-- Stage 2 (the SDR pipeline) does NOT depend on these rows existing, so
+-- you can defer this transcription work without blocking anything else.
+--
+-- One INSERT per name. Required fields: flight, name. Optional fields:
+-- age, nationality, obituary_fragment, obituary_source.
+--
+-- Apply with:
+--   wrangler d1 execute boeingwatch --remote --file=db/seed-victims.sql
+-- ═══════════════════════════════════════════════════════════════════
+
+-- Example row, kept commented out. Copy the form for each victim.
+--
+-- INSERT INTO victims (flight, name, age, nationality, obituary_fragment, obituary_source) VALUES
+--   ('JT610', 'Andrea Manfredi', 26, 'Italian', 'Professional cyclist; survived a 2017 cardiac arrest. En route home from a riding holiday in Bali.', 'https://en.wikipedia.org/wiki/Andrea_Manfredi');
+
+-- No rows inserted yet. Memorial Wall will render empty until seeded.
