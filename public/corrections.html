@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CORRECTIONS · BOEING WATCH</title>
+<meta name="description" content="The Boeing Watch corrections log. Every correction, dated and sourced. The load-bearing element of the methodology.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Boeing Watch">
+<meta property="og:title" content="CORRECTIONS · BOEING WATCH">
+<meta property="og:description" content="The public corrections log. Append-only. Every mistake dated, sourced, preserved.">
+<meta property="og:url" content="https://boeingwatch.org/corrections.html">
+<meta name="theme-color" content="#F0EBE0">
+<link rel="icon" type="image/svg+xml" href="/assets/boeingwatch-favicon.svg">
+<link rel="canonical" href="https://boeingwatch.org/corrections.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  /* Correction entry block — used when the log is non-empty */
+  .correction {
+    border: 1px solid var(--line);
+    background: var(--bg);
+    padding: 22px 26px;
+    margin-bottom: 14px;
+  }
+  .correction-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line-soft);
+    flex-wrap: wrap;
+  }
+  .correction-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    text-transform: uppercase;
+  }
+  .correction-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+  .correction-affected {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-bottom: 12px;
+  }
+  .correction-affected strong { color: var(--ink); font-weight: 500; }
+  .change-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .change-row .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    padding-top: 3px;
+  }
+  .change-row.was .tag { color: var(--red); }
+  .change-row.now .tag { color: var(--green); }
+  .change-row .content {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .change-row.was .content { text-decoration: line-through; text-decoration-color: var(--red-dim); color: var(--ink-dim); }
+  .correction-source {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+  }
+  .correction-source a { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="topbar-brand" href="/">BOEING · WATCH</a>
+    <div class="topbar-mid">
+      <span class="station">INDEPENDENT · NON-AFFILIATED</span>
+    </div>
+    <div class="topbar-nav">
+      <a href="/methodology.html">METHODOLOGY</a>
+      <a href="/corrections.html" aria-current="page">CORRECTIONS</a>
+      <a href="/sources.html">SOURCES</a>
+      <a href="/about.html">ABOUT</a>
+    </div>
+  </div>
+
+  <header class="page-head">
+    <div class="kicker">▎ DOCUMENT 002 · CORRECTIONS · PUBLIC LOG</div>
+    <h1>THE CORRECTIONS<br>LOG</h1>
+    <p class="lede">
+      Every correction made to a published entry on this site is recorded here, in reverse chronological order, with the date, the entry affected, the old wording, the new wording, and the source of the correction. The log is never deleted. It is the permanent public record of the site's mistakes and the standing test of its honesty.
+    </p>
+    <div class="page-meta">
+      <span>POLICY <strong><a href="/methodology.html#s8">METHODOLOGY § 08</a></strong></span>
+      <span>REPORT <strong><a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a></strong></span>
+      <span>REVIEW WINDOW <strong>7 DAYS</strong></span>
+      <span>ACK WINDOW <strong>48 HOURS</strong></span>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">HOW TO FILE A CORRECTION</div>
+      <div class="section-num">§ INTAKE</div>
+    </div>
+    <div class="prose">
+      <p>Send an email to <a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a> with three things:</p>
+      <ol>
+        <li>The URL of the page or entry containing the claim.</li>
+        <li>The exact text of the claim you believe is wrong.</li>
+        <li>The source that supports the correction — a court filing, a named-reporter article in a named publication, an FAA record, an obituary, a coroner's report, a corporate filing, or another document of equivalent standing.</li>
+      </ol>
+      <p>You do not need to be the subject of the entry to file a correction. You do not need to give a reason beyond the source. You may file anonymously and we will not disclose your identity in any published correction.</p>
+      <p>The full procedure — receipt acknowledgement within 48 hours, review within 7 calendar days, prominence rules for material corrections — is documented in <a href="/methodology.html#s8">Methodology § 08</a>.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">THE LOG</div>
+      <div class="section-num">§ ENTRIES</div>
+    </div>
+
+    <!-- ────────────────────────────────────────────────────────────
+      Empty state.
+      Each correction, when one is filed, becomes a <article class="correction">…</article>
+      block. The template lives in the comment below the empty state.
+    ───────────────────────────────────────────────────────────── -->
+
+    <div class="empty-state">
+      <div class="glyph">0</div>
+      <div class="empty-label">▎ NO CORRECTIONS ON FILE</div>
+      <div class="empty-note">
+        This page has been empty since the site went live on 13 May 2026. The first correction filed against a published claim will be recorded here within seven days of receipt. The counter at the head of this section will increment by one and never reset.
+      </div>
+    </div>
+
+    <!--
+    TEMPLATE FOR FUTURE ENTRIES — copy this block, fill in the fields, prepend
+    to the list above (newest first). Keep the empty-state block in place until
+    the first correction is published, then replace it.
+
+    <article class="correction" id="c0001">
+      <div class="correction-head">
+        <span class="correction-date">DD MON YYYY · CORRECTION 0001</span>
+        <span class="correction-id">Entry: /wire/2026-05-13/sdr-2026-12345</span>
+      </div>
+      <div class="correction-affected">
+        FIELD: <strong>severity</strong> · CATEGORY: <strong>classification</strong>
+      </div>
+      <div class="change-row was">
+        <div class="tag">WAS</div>
+        <div class="content">[old text here]</div>
+      </div>
+      <div class="change-row now">
+        <div class="tag">NOW</div>
+        <div class="content">[new text here]</div>
+      </div>
+      <div class="correction-source">
+        SOURCE · [named-reporter article, court filing, FAA bulletin, etc.] · <a href="…" target="_blank" rel="noopener">link</a>
+      </div>
+    </article>
+    -->
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">WHAT IS NOT A CORRECTION</div>
+      <div class="section-num">§ SCOPE</div>
+    </div>
+    <div class="prose">
+      <p>The corrections process is for factual errors in published claims. It is not the right route for the following kinds of request, which are routed elsewhere or declined:</p>
+      <ul>
+        <li><strong>Tone or framing complaints.</strong> If the underlying fact is correctly stated, no correction is filed. Editorial preferences are not corrections.</li>
+        <li><strong>Removal of true information.</strong> A claim that is both factually correct and drawn from a named public source is not removed on request. The right of an individual or a corporation to a private life does not extend to acts already in the public record.</li>
+        <li><strong>Anonymously sourced rebuttals.</strong> A response that cannot be attributed to a named, accountable source is not used to overturn a claim that is itself drawn from a named, accountable source.</li>
+        <li><strong>Threats of legal action absent a specific factual claim.</strong> A demand letter that does not identify a specific factual error is acknowledged for the record and otherwise filed without action.</li>
+      </ul>
+      <p>If you believe a published entry is unfair but factually correct, the right response is to publish a reply in a venue where you may be quoted by name. We will link to it from the entry on request.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>HARROW LAB · 2026 · INDEPENDENT · NOT AFFILIATED WITH BOEING OR THE FAA · <a href="/">FRONT PAGE</a> · <a href="/methodology.html">METHODOLOGY</a> · <a href="/sources.html">SOURCES</a> · <a href="/about.html">ABOUT</a></div>
+    <div>EVERY CLAIM ON THIS PAGE IS LINKED TO A NAMED SOURCE · <a href="mailto:corrections@boeingwatch.org">corrections@boeingwatch.org</a></div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#F0EBE0"/>
+  <rect x="2" y="2" width="28" height="28" fill="none" stroke="#1B1814" stroke-width="1"/>
+  <text x="16" y="22" text-anchor="middle"
+        font-family="'Bebas Neue', 'Arial Narrow', sans-serif"
+        font-size="20" font-weight="400"
+        fill="#B8651A" letter-spacing="0.5">BW</text>
+  <circle cx="26" cy="7" r="2" fill="#9B1C1C"/>
+</svg>

@@ -1,0 +1,36 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local secrets (Stage 2 will add these; the file should never be committed)
+SECRETS.md
+.env
+.env.*
+!.env.example
+
+# Node — reserved for Stage 2 worker scaffolding
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Wrangler — reserved for Stage 2
+.wrangler/
+.dev.vars
+
+# Cloudflare Pages build artifacts (if a build step is ever added)
+.pages-build-output/
+dist/
+build/
+
+# Local test outputs
+coverage/
+*.log
